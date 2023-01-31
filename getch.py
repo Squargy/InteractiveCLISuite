@@ -1,3 +1,5 @@
+#   TODO: Find and add reference to where the code snippet was found!
+
 class _Getch:
     def __init__(self):
         try:

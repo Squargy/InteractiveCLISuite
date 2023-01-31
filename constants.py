@@ -1,13 +1,11 @@
 from enum import Enum, IntEnum
 
-
 class KEY:
     CTRLC = b'\x03'
-    DOWN = b'H'
+    DOWN = b'P'
     ENTER = b'\r'
     SPACE = b' '
-    UP = b'P'
-
+    UP = b'H'
 
 class DIRECTION(IntEnum):
     UP = -1

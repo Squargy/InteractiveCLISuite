@@ -1,3 +1,7 @@
+#   TODO: Add documentation
+#   TODO: Clean up syntax
+
+from ssl import Options
 from click import option
 import os
 from getch import _Getch
@@ -131,6 +135,53 @@ class Menu:
 
     def __str__(self) -> str:
         return str(self.options)
+
+#   TODO: Add the class PaginatedMenu
+
+class PaginatedMenu(Menu):
+    #   Använd istället flera OptionsContainer??
+    def __init__(self, name, options: OptionsContainer, items_per_page: int, description: str = '') -> None:
+        self.name = name
+        self.description = description
+        self.cursor = 0
+        self.items_per_page = items_per_page
+        self.all_options = options
+        self.options = OptionsContainer(self.options[0:items_per_page])
+        self.options.options.append(Option("Next page", callback=Callback(self.next_page)))
+
+    # def __init__(self, name, options: OptionsContainer, items_per_page: int, description: str = '') -> None:
+    #     super().__init__(name, options, description)
+    #     self.items_per_page = items_per_page
+    #     max_per_page_options = max(self.items_per_page, len(options))
+    #     self.current_options_indices = range(0, max_per_page_options)
+    #     self.prev_and_next = OptionsContainer([
+    #         Option("Previous page", callback=Callback(self.prev_page)),
+    #         Option("Next page", callback=Callback(self.next_page))
+    #     ])
+
+    def render(self) -> None:
+        print(self.name)
+        if self.description != "":
+            print(self.description)
+        for i in self.current_options_indices:
+            picked = "X" if self.options[i].picked else " "
+            cursor = "<-------" if self.cursor == i else ""
+            print(f"[{picked}] {self.options[i].text}{cursor}")
+        self.render_prev_and_next()
+
+    def render_prev_and_next(self) -> None:
+        if 0 < self.current_options_indices[0]:
+            print()
+
+    def next_page(self) -> None:
+        max_index = max(self.current_options_indices[-1] + self.items_per_page, len(self.options))
+        self.current_options_indices = range(self.current_options_indices[-1], max_index)
+        self.cursor = self.current_options_indices[-1]
+
+    def prev_page(self) -> None:
+        min_index = min(self.current_options_indices[0] - self.items_per_page, 0)
+        self.current_options_indices = range(min_index, self.current_options_indices[0])
+        self.cursor = min_index
 
 
 class CLI:
