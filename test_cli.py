@@ -3,6 +3,7 @@ import io
 from cli import DIRECTION, Callback, Option
 from cli import OptionsContainer, Menu, RadioOptionsContainer
 from constants import ARG_SOURCE
+from unittest.mock import patch
 
 
 def func() -> None:
@@ -94,48 +95,48 @@ class Test_TestCLI(unittest.TestCase):
 
     def test_menu_render_correct_init(self):
         menu = new_menu()
-        with unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_stdout:
+        with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             menu.render()
         self.assertEqual(fake_stdout.getvalue().strip(), """test\n[ ] test<-------\n[ ] test2\n[ ] test3""")
 
     def test_menu_render_correct_moved(self):
         menu = new_menu()
         menu.move(DIRECTION.DOWN)
-        with unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_stdout:
+        with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             menu.render()
         self.assertEqual(fake_stdout.getvalue().strip(), """test\n[ ] test\n[ ] test2<-------\n[ ] test3""")
 
     def test_menu_render_correct_picked(self):
         menu = new_menu()
         menu.set_picked()
-        with unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_stdout:
+        with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             menu.render()
         self.assertEqual(fake_stdout.getvalue().strip(), """test\n[X] test<-------\n[ ] test2\n[ ] test3""")
 
     def test_invoke_option(self):
         opt = Option("", func, True)
-        with unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_stdout:
+        with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             opt.invoke()
         self.assertEqual(fake_stdout.getvalue().strip(), "test func")
 
     def test_invoke_option_with_args_source_args(self):
         cb = Callback(func2, ARG_SOURCE.ARGS, "squargy")
         opt = Option("", cb)
-        with unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_stdout:
+        with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             opt.invoke()
         self.assertEqual(fake_stdout.getvalue().strip(), "test squargy")
 
     def test_invoke_option_with_args_source_text(self):
         cb = Callback(func2, ARG_SOURCE.TEXT)
         opt = Option("test", cb)
-        with unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_stdout:
+        with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             opt.invoke()
         self.assertEqual(fake_stdout.getvalue().strip(), "test test")
 
     def test_invoke_option_with_args_source_default_value(self):
         cb = Callback(func2, ARG_SOURCE.VALUE)
         opt = Option("", cb, value="hej")
-        with unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_stdout:
+        with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             opt.invoke()
         self.assertEqual(fake_stdout.getvalue().strip(), "test hej")
 
@@ -144,9 +145,10 @@ class Test_TestCLI(unittest.TestCase):
         menu.set_picked()
         menu.move(DIRECTION.DOWN)
         menu.set_picked()
-        with unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_stdout:
+        with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             menu.invoke_picked()
         self.assertEqual(fake_stdout.getvalue().strip(), "test func\ntest func")
+
 
 if __name__ == "__main__":
     unittest.main()
