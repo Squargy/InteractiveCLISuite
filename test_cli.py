@@ -1,18 +1,21 @@
 import unittest
 import io
-from unittest.mock import patch
-
-from cli import DIRECTION, Callback, Option, OptionsContainer, Menu, RadioOptionsContainer
+from cli import DIRECTION, Callback, Option
+from cli import OptionsContainer, Menu, RadioOptionsContainer
 from constants import ARG_SOURCE
+
 
 def func() -> None:
     print("test func")
 
+
 def func2(name) -> None:
     print("test", name)
 
-def new_callback_without_args(func: 'function') -> Callback:
+
+def new_callback_without_args(func: 'func') -> Callback:
     return Callback(func)
+
 
 def new_option_container() -> OptionsContainer:
     opt = Option("test", new_callback_without_args(func))
@@ -20,14 +23,17 @@ def new_option_container() -> OptionsContainer:
     opt3 = Option("test3", new_callback_without_args(func))
     return OptionsContainer([opt, opt2, opt3])
 
+
 def new_radio_option_container() -> RadioOptionsContainer:
     opt = Option("test", new_callback_without_args(func))
     opt2 = Option("test2", new_callback_without_args(func))
     opt3 = Option("test3", new_callback_without_args(func))
     return RadioOptionsContainer([opt, opt2, opt3])
 
+
 def new_menu() -> Menu:
     return Menu("test", new_option_container())
+
 
 class Test_TestCLI(unittest.TestCase):
     def test_new_option(self):
@@ -36,11 +42,17 @@ class Test_TestCLI(unittest.TestCase):
 
     def test_new_OptionContainer(self):
         optContainer = new_option_container()
-        self.assertTrue(len(optContainer.options) == 3 and optContainer.options[0].picked == False and optContainer.options[1].picked == False and optContainer.options[2].picked == False)
+        self.assertTrue(len(optContainer.options) == 3
+                        and optContainer.options[0].picked is False
+                        and optContainer.options[1].picked is False
+                        and optContainer.options[2].picked is False)
 
     def test_new_RadioOptionContainer(self):
         optContainer = new_radio_option_container()
-        self.assertTrue(len(optContainer.options) == 3 and optContainer.options[0].picked == True and optContainer.options[1].picked == False and optContainer.options[2].picked == False)
+        self.assertTrue(len(optContainer.options) == 3
+                        and optContainer.options[0].picked is True 
+                        and optContainer.options[1].picked is False 
+                        and optContainer.options[2].picked is False)
 
     def test_new_menu(self):
         menu = new_menu()
